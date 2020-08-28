@@ -1,0 +1,28 @@
+{
+  "name": "@devmastery/utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "pnpm run test && tsc",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.3",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/jwk-to-pem": "^2.0.0",
+    "babel-jest": "^26.1.0",
+    "deepmerge": "^4.2.2",
+    "jest": "^26.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.4",
+    "nanoid": "^3.1.10",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.6"
+  }
+}

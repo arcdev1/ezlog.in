@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/.well-known/(.*)",
+      "destination": "/api/.well-known/$1"
+    }
+  ]
+}
