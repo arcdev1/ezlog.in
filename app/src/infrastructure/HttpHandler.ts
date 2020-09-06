@@ -310,7 +310,6 @@ export function internalServerError(e?: Error) {
         code: String(status.statusCode),
         message: status.statusMessage,
       };
-  console.log(e);
   return Object.freeze({
     ...getHttpStatus(500),
     errors: [apiError],

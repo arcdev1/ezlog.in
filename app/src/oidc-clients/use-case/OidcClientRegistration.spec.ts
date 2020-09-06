@@ -2,7 +2,6 @@ import * as faker from "faker";
 import {
   OidcClientInfo,
   OidcClientRegistration,
-  MissingRedirectUriError,
 } from "./OidcClientRegistration";
 import {
   MissingOidcClientNameError,
@@ -13,45 +12,71 @@ function fakeClientInfo(
   overrides: Partial<OidcClientInfo> = {}
 ): OidcClientInfo {
   return {
-    name: faker.name.firstName(),
-    redirectURIs: [faker.internet.url()],
+    client_name: Array(2).fill(faker.name.firstName()).join(" "),
+    redirect_uris: ["https://" + faker.internet.domainName()],
     ...overrides,
   };
 }
 
+function fakeRepo() {
+  let clients = [];
+  return Object.freeze({
+    add: clients.push,
+    items: () => Object.freeze(clients),
+  });
+}
+
 describe("OIDC Client Registration", () => {
-  it("ensures the client name is not null", async () => {
-    let registration = new OidcClientRegistration();
-    let newClient: OidcClientInfo = fakeClientInfo({ name: null });
+  it("fails when the client name is null", async () => {
+    let registration = new OidcClientRegistration({
+      oidcClientRepo: fakeRepo(),
+    });
+    let newClient: OidcClientInfo = fakeClientInfo({ client_name: null });
     await expect(registration.of(newClient)).rejects.toThrow(
       MissingOidcClientNameError
     );
   });
 
-  it("ensures the client name is at least 2 characters long", async () => {
-    let registration = new OidcClientRegistration();
-    let newClient: OidcClientInfo = fakeClientInfo({ name: "a" });
+  it("fails when the client name is less than 2 characters long", async () => {
+    let registration = new OidcClientRegistration({
+      oidcClientRepo: fakeRepo(),
+    });
+    let newClient: OidcClientInfo = fakeClientInfo({ client_name: "a" });
     await expect(registration.of(newClient)).rejects.toThrow(
       OidcClientNameTooShortError
     );
   });
 
-  it("ensures the client provides at least one redirect URI", async () => {
-    let registration = new OidcClientRegistration();
-    let newClient: OidcClientInfo = fakeClientInfo({ redirectURIs: null });
+  it("fails when the client does not provide at least one redirect URI", async () => {
+    let registration = new OidcClientRegistration({
+      oidcClientRepo: fakeRepo(),
+    });
+    let newClient: OidcClientInfo = fakeClientInfo({ redirect_uris: null });
     await expect(registration.of(newClient)).rejects.toThrow(
-      MissingRedirectUriError
+      MissingRedirectsError
     );
-    let newClient2: OidcClientInfo = fakeClientInfo({ redirectURIs: [] });
+    let newClient2: OidcClientInfo = fakeClientInfo({ redirect_uris: [] });
     await expect(registration.of(newClient2)).rejects.toThrow(
-      MissingRedirectUriError
+      MissingRedirectsError
+    );
+  });
+
+  it("ensures redirect URIs are valid", async () => {
+    let registration = new OidcClientRegistration({
+      oidcClientRepo: fakeRepo(),
+    });
+    let newClient: OidcClientInfo = fakeClientInfo({ redirect_uris: ["foo"] });
+    await expect(registration.of(newClient)).rejects.toThrow(
+      BadRedirectUriError
     );
   });
 
   it("registers a client", async () => {
-    let registration = new OidcClientRegistration();
+    let registration = new OidcClientRegistration({
+      oidcClientRepo: fakeRepo(),
+    });
     let newClient: OidcClientInfo = fakeClientInfo();
     let registrant = await registration.of(newClient);
-    expect(registrant.name).toBe(newClient.name);
+    expect(registrant.client_name).toBe(newClient.client_name);
   });
 });

@@ -8,7 +8,6 @@ class HttpClientImpl implements HttpClient {
     requestInfo: RequestInfo,
     options?: Omit<RequestInit, "method">
   ) {
-    console.log("get");
     return this.doFetch(requestInfo, {
       ...options,
       method: "GET",
@@ -34,7 +33,6 @@ class HttpClientImpl implements HttpClient {
   }
 
   private async doFetch(requestInfo: RequestInfo, options: RequestInit) {
-    console.log("do fetch");
     try {
       let response = await fetch(requestInfo, options);
       if (response.ok) {

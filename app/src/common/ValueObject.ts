@@ -12,11 +12,15 @@ export abstract class ValueObject<T> {
     this.#value = value;
   }
 
-  public get value() {
-    return this.#value;
+  public toString() {
+    return this.value.toString();
   }
 
   public equals(other: ValueObject<T>) {
     return this.value === other.value;
+  }
+
+  public get value() {
+    return this.#value;
   }
 }

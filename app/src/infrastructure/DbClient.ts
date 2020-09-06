@@ -15,7 +15,6 @@ if (process.env.NODE_ENV === "development") {
 export const dbClient = new Proxy(dynamoose, {
   get(target, propKey, _receiver) {
     const original = target[propKey];
-    console.log({ original });
     return typeof original === "function"
       ? function (...args: any) {
           try {

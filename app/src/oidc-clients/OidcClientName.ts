@@ -1,53 +1,62 @@
-export class OidcClientName {
-  #value: string;
-  public static get MAX_LENGTH() {
-    return 255;
-  }
+import { CustomError } from "../errors/CustomError";
+import { isNullOrEmpty, isShorterThan, isLongerThan } from "../common/utils";
+import { ValueObject } from "../common/ValueObject";
+import { errorIf } from "../errors";
 
-  public static get MIN_LENGTH() {
-    return 2;
-  }
-
-  public static validate(name: string) {
-    const normalizedName = OidcClientName.normalize(name);
-    if (!normalizedName?.length) {
-      return new MissingOidcClientNameError();
-    }
-
-    let error: Error;
-    if (normalizedName.length < OidcClientName.MIN_LENGTH) {
-      error = new OidcClientNameTooShortError({
-        minLength: OidcClientName.MIN_LENGTH,
-        clientName: normalizedName,
-      });
-    }
-    if (normalizedName.length > OidcClientName.MAX_LENGTH) {
-      error = new OidcClientNameTooLongError({
-        maxLength: OidcClientName.MAX_LENGTH,
-        clientName: normalizedName,
-      });
-    }
-    return error;
+export class OidcClientName extends ValueObject<string> {
+  public static of(name: string) {
+    let normalizedName = OidcClientName.normalize(name);
+    OidcClientName.validate(normalizedName, {
+      throwOnError: true,
+      normalized: true,
+    });
+    return new OidcClientName(normalizedName);
   }
 
   public static normalize(name: string) {
     return name?.trim();
   }
 
-  public static of(name: string) {
-    return new OidcClientName(name);
-  }
+  public static validate(
+    name: string,
+    options?: { normalized?: boolean; throwOnError?: boolean }
+  ) {
+    const normalizedName = options?.normalized
+      ? name
+      : OidcClientName.normalize(name);
+    let error =
+      errorIf(
+        isNullOrEmpty(normalizedName),
+        new MissingOidcClientNameError()
+      ) ??
+      errorIf(
+        isShorterThan(normalizedName, OidcClientName.MIN_LENGTH),
+        new OidcClientNameTooShortError({
+          minLength: OidcClientName.MIN_LENGTH,
+          clientName: normalizedName,
+        })
+      ) ??
+      errorIf(
+        isLongerThan(normalizedName, OidcClientName.MAX_LENGTH),
+        new OidcClientNameTooLongError({
+          maxLength: OidcClientName.MAX_LENGTH,
+          clientName: normalizedName,
+        })
+      );
 
-  private constructor(readonly name: string) {
-    this.setName(name);
-  }
-
-  private setName(name: string) {
-    let invalidName = OidcClientName.validate(name);
-    if (invalidName) {
-      throw invalidName;
+    if (error && options?.throwOnError) {
+      throw error;
     }
-    this.#value = OidcClientName.normalize(name);
+
+    return error;
+  }
+
+  public static get MAX_LENGTH() {
+    return 255;
+  }
+
+  public static get MIN_LENGTH() {
+    return 2;
   }
 
   public toUriComponent(): string {
@@ -57,71 +66,43 @@ export class OidcClientName {
   public toString() {
     return this.value;
   }
-
-  public get value() {
-    return this.#value;
-  }
 }
 
-export class MissingOidcClientNameError extends Error {
+export class MissingOidcClientNameError extends CustomError {
   constructor() {
-    super("Client name can not be empty.");
-
-    Error.captureStackTrace &&
-      Error.captureStackTrace(this, MissingOidcClientNameError);
-
-    this.name = "MissingOidcClientNameError";
+    super({
+      message: "Client name can not be empty.",
+      name: "MissingOidcClientNameError",
+    });
   }
 }
 
-interface OidcClientNameTooShortErrorParams {
-  minLength: number;
-  clientName: string;
-}
-
-export class OidcClientNameTooShortError extends Error {
-  params: OidcClientNameTooShortErrorParams;
-  constructor(params: OidcClientNameTooShortErrorParams) {
-    super(`Client name must be at least ${params.minLength} character long.`);
-
-    Error.captureStackTrace &&
-      Error.captureStackTrace(this, OidcClientNameTooShortError);
-
-    this.name = "OidcClientNameTooShortError";
-    this.params = params;
+export class OidcClientNameTooShortError extends CustomError {
+  constructor(params: { minLength: number; clientName: string }) {
+    super({
+      message: `Client name must be at least ${params.minLength} character long.`,
+      params,
+      name: "OidcClientNameTooShortError",
+    });
   }
 }
 
-interface OidcClientNameTooLongErrorParams {
-  maxLength: number;
-  clientName: string;
-}
-export class OidcClientNameTooLongError extends Error {
-  #params: OidcClientNameTooLongErrorParams;
-  constructor(params: OidcClientNameTooLongErrorParams) {
-    super(`Client name must be at least ${params.maxLength} character long.`);
-
-    Error.captureStackTrace &&
-      Error.captureStackTrace(this, OidcClientNameTooLongError);
-
-    this.name = "OidcClientNameTooLongError";
-    this.#params = params;
+export class OidcClientNameTooLongError extends CustomError {
+  constructor(params: { maxLength: number; clientName: string }) {
+    super({
+      message: `Client name must be less than ${params.maxLength} character long.`,
+      params,
+      name: "OidcClientNameTooLongError",
+    });
   }
 }
 
-interface OidcClientNameNotAvailableParams {
-  alternatives: string[];
-  clientName: string;
-}
-export class OidcClientNameNotAvailableError extends Error {
-  #params: OidcClientNameNotAvailableParams;
-  constructor(params: OidcClientNameNotAvailableParams) {
-    super(`The name "${params.clientName}" is not available.`);
-
-    Error.captureStackTrace &&
-      Error.captureStackTrace(this, OidcClientNameTooLongError);
-
-    this.name = "ClientNameNotAvailableError";
-    this.#params = params;
+export class OidcClientNameNotAvailableError extends CustomError {
+  constructor(params: { alternatives: string[]; clientName: string }) {
+    super({
+      message: `The name "${params.clientName}" is not available.`,
+      params,
+      name: "ClientNameNotAvailableError",
+    });
   }
 }

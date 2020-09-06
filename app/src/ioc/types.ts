@@ -1,11 +1,13 @@
 export const TYPES = {
-  IdProvider: "idProvider",
-  IdFactory: "idFactory",
-  OidcClientNameCollection: "oidcClientNameCollection",
-  OidcClientList: "oidcClientList",
   DbClient: "dbClient",
   HttpClient: "httpClient",
+  IdProvider: "idProvider",
+  IdStringProvider: "newIdString",
   NameRequestService: "nameRequestService",
-  OidcClientNameSelection: "oidcClientNameSelection",
   OidcClientDAO: "OidcClientDAO",
+  OidcClientList: "oidcClientList",
+  OidcClientNameCollection: "oidcClientNameCollection",
+  OidcClientNameSelection: "oidcClientNameSelection",
+  VersionNumberProvider: "makeVersion",
+  VersionProvider: "versionProvider",
 };

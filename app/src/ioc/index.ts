@@ -13,13 +13,25 @@ import {
   OidcClientDAO,
   OidcClientModel,
 } from "../infrastructure/OidcClientModel";
-import { IdProvider, IdFactory } from "../entities/IdFactory";
 import { nanoid } from "nanoid";
+import { IdStringProvider, IdProvider, IdProviderImpl } from "../common/Id";
+import { VersionNumberProvider } from "../common/Version";
 
 const container = createContainer();
 
-container.register<IdProvider>(TYPES.IdProvider, asValue(nanoid));
-container.register<IdFactory>(TYPES.IdFactory, asClass(IdFactory));
+container.register<IdStringProvider>(TYPES.IdStringProvider, asValue(nanoid));
+container.register<IdProvider>(
+  TYPES.IdProvider,
+  asClass(IdProviderImpl).singleton()
+);
+container.register<VersionNumberProvider>(
+  TYPES.VersionNumberProvider,
+  asValue(() => Date.now() + Math.random())
+);
+container.register<IdProvider>(
+  TYPES.IdProvider,
+  asClass(IdProviderImpl).singleton()
+);
 container.register<OidcClientDAO>(
   TYPES.OidcClientDAO,
   asValue(OidcClientModel)

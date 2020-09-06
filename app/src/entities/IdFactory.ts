@@ -9,7 +9,6 @@ export interface Id extends ValueObject<string> {
 export class IdFactory {
   #idProvider: IdProvider;
   public constructor({ idProvider }: { idProvider: IdProvider }) {
-    console.log(idProvider);
     this.#idProvider = idProvider;
   }
 
