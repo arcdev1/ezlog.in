@@ -1,21 +1,21 @@
 import { errorIf } from "../errors/";
 import { CustomError } from "../errors/CustomError";
-import { isNotFormatted, isNullOrEmpty } from "./utils";
+import { isNotFormatted, isNullOrEmpty } from "./utils/assertions";
 import { ValueObject } from "./ValueObject";
 
-export type IdStringProvider = () => string;
+export type PrimitiveIdFn = () => string | Promise<string>;
 export interface IdProvider {
-  next: () => Id;
+  next: () => Id | Promise<Id>;
 }
 export class IdProviderImpl {
-  readonly #newIdString: IdStringProvider;
+  readonly #primitiveId: PrimitiveIdFn;
 
-  constructor({ newIdString }: { newIdString: IdStringProvider }) {
-    this.#newIdString = newIdString;
+  constructor({ primitiveId }: { primitiveId: PrimitiveIdFn }) {
+    this.#primitiveId = primitiveId;
   }
 
-  public next() {
-    return Id.of(this.#newIdString());
+  public async next() {
+    return Id.of(await this.#primitiveId());
   }
 }
 

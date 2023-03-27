@@ -1,6 +1,6 @@
 import { CustomError } from "../errors/CustomError";
 import { ValueObject } from "../common/ValueObject";
-import { isNullOrEmpty, isNotFormatted } from "../common/utils";
+import { isNullOrEmpty, isNotFormatted } from "../common/utils/assertions";
 import { errorIf } from "../errors";
 
 export class HttpSecureUrl extends ValueObject<URL> {

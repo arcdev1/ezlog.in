@@ -1,5 +1,9 @@
 import { CustomError } from "../errors/CustomError";
-import { isNullOrEmpty, isShorterThan, isLongerThan } from "../common/utils";
+import {
+  isNullOrEmpty,
+  isShorterThan,
+  isLongerThan,
+} from "../common/utils/assertions";
 import { ValueObject } from "../common/ValueObject";
 import { errorIf } from "../errors";
 

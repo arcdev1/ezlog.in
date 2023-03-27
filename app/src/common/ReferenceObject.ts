@@ -13,4 +13,12 @@ export abstract class ReferenceObject {
   public equals(other: ReferenceObject) {
     return this.#id === other.#id && this.#version === other.#version;
   }
+
+  public get id() {
+    return this.#id;
+  }
+
+  public get version() {
+    return this.#version;
+  }
 }

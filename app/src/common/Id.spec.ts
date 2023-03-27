@@ -4,14 +4,14 @@ import { container, TYPES } from "../ioc";
 const idProvider = container.resolve<IdProvider>(TYPES.IdProvider);
 
 describe("id", () => {
-  it("creates a unique id", () => {
-    let id1 = idProvider.next();
-    let id2 = idProvider.next();
+  it("creates a unique id", async () => {
+    let id1 = await idProvider.next();
+    let id2 = await idProvider.next();
     expect(id1.value).not.toBe(id2.value);
   });
-  it("compares", () => {
-    let id1 = idProvider.next();
-    let id2 = idProvider.next();
+  it("compares", async () => {
+    let id1 = await idProvider.next();
+    let id2 = await idProvider.next();
     expect(id1.equals(id1)).toBe(true);
     expect(id2.equals(id2)).toBe(true);
     expect(id1.equals(id2)).toBe(false);

@@ -1,6 +1,8 @@
 importers:
   app:
     dependencies:
+      '@aws/dynamodb-data-mapper': 0.7.3_aws-sdk@2.743.0
+      '@aws/dynamodb-data-mapper-annotations': 0.7.3_aws-sdk@2.743.0
       '@devmastery/utils': 'link:../utils'
       '@types/co-body': 5.1.0
       '@types/faker': 4.1.12
@@ -26,6 +28,8 @@ importers:
       ts-jest: 26.3.0_jest@26.4.2+typescript@3.9.7
       typescript: 3.9.7
     specifiers:
+      '@aws/dynamodb-data-mapper': ^0.7.3
+      '@aws/dynamodb-data-mapper-annotations': ^0.7.3
       '@devmastery/utils': 'link:../utils'
       '@types/co-body': ^5.1.0
       '@types/faker': ^4.1.12
@@ -131,6 +135,83 @@ packages:
     dev: false
     resolution:
       integrity: sha512-bS7uF+h0s5aiklc/iRaujiSsiladOsZBLrJ6QImJDXvubCAQtvE7om7ShlGSXixkMAO0OVMDWyuwLlEy8V1Ing==
+  /@aws/dynamodb-auto-marshaller/0.7.1_aws-sdk@2.743.0:
+    dependencies:
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-LeURlf6/avrfFo9+4Yht9J3CUTJ72yoBpm1FOUmlexuHNW4Ka61tG30w3ZDCXXXmCO2rG0k3ywAgNJEo3WPbyw==
+  /@aws/dynamodb-batch-iterator/0.7.1_aws-sdk@2.743.0:
+    dependencies:
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+      utf8-bytes: 0.0.1
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-SdwBFnjN+ncIl+MOogTeEh1/C6O0jAcqD5YA3AujcH5JPWiMescKAefO4VQbgR0Q9ohcYcMnwL3q6mCdUpyJ9w==
+  /@aws/dynamodb-data-mapper-annotations/0.7.3_aws-sdk@2.743.0:
+    dependencies:
+      '@aws/dynamodb-auto-marshaller': 0.7.1_aws-sdk@2.743.0
+      '@aws/dynamodb-data-mapper': 0.7.3_aws-sdk@2.743.0
+      '@aws/dynamodb-data-marshaller': 0.7.3_aws-sdk@2.743.0
+      reflect-metadata: 0.1.13
+      tslib: 1.13.0
+      uuid: 3.4.0
+    dev: false
+    peerDependencies:
+      aws-sdk: '*'
+    resolution:
+      integrity: sha512-RROw+6EIJd0bJsl/76wxfvDkv/irY9pfpp/VRlmEIVixKW2UtMqpni+Hs0XuBRtmGKGfFrWB2WGYiikSnfv4FA==
+  /@aws/dynamodb-data-mapper/0.7.3_aws-sdk@2.743.0:
+    dependencies:
+      '@aws/dynamodb-auto-marshaller': 0.7.1_aws-sdk@2.743.0
+      '@aws/dynamodb-batch-iterator': 0.7.1_aws-sdk@2.743.0
+      '@aws/dynamodb-data-marshaller': 0.7.3_aws-sdk@2.743.0
+      '@aws/dynamodb-expressions': 0.7.3_aws-sdk@2.743.0
+      '@aws/dynamodb-query-iterator': 0.7.1_aws-sdk@2.743.0
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-2DYHoF2jvO7L2TfwfJoTfdJz0M6qSVJ0wM0zQ97ehrTyVSz/yWDO3GqMA9jsUqf0fZl3CIItHBhiXdddsH5cpA==
+  /@aws/dynamodb-data-marshaller/0.7.3_aws-sdk@2.743.0:
+    dependencies:
+      '@aws/dynamodb-auto-marshaller': 0.7.1_aws-sdk@2.743.0
+      '@aws/dynamodb-expressions': 0.7.3_aws-sdk@2.743.0
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+      utf8-bytes: 0.0.1
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-ea9PR19J2uY7lNSUo2bEcbfI8GiD0n66dISoBHZFrHjgCO2ao2P6UlyG/k0EMhr2zNzTWYNd08VYgTSYz5GBAA==
+  /@aws/dynamodb-expressions/0.7.3_aws-sdk@2.743.0:
+    dependencies:
+      '@aws/dynamodb-auto-marshaller': 0.7.1_aws-sdk@2.743.0
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-63vaCyNKmO8BE/JWlQ3DSFG+qCAWgO5MGif31E5CPdWKaBt5yBG5qnh5w5oFelKRK6/1M6cYKl/Yui08wimUig==
+  /@aws/dynamodb-query-iterator/0.7.1_aws-sdk@2.743.0:
+    dependencies:
+      aws-sdk: 2.743.0
+      tslib: 1.13.0
+    dev: false
+    peerDependencies:
+      aws-sdk: ^2.7.0
+    resolution:
+      integrity: sha512-x28lcgj2HDadxszYEwQjAJyGMrdy3aznLM2TSEeQxqCxKzFT1qewmKxgWSMslH+CiLuuqs9H1FaIwvP15b6UHQ==
   /@babel/code-frame/7.10.4:
     dependencies:
       '@babel/highlight': 7.10.4
@@ -9685,6 +9766,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
+  /utf8-bytes/0.0.1:
+    dev: false
+    resolution:
+      integrity: sha1-EWsCVEjJtQAIHN+/H01sbDfYg30=
   /util-deprecate/1.0.2:
     dev: false
     resolution:

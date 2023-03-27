@@ -2,7 +2,7 @@ import {
   HttpHandler,
   HttpRequestObject,
   ok,
-} from "../../../infrastructure/HttpHandler";
+} from "../../../common/infrastructure/HttpHandler";
 
 const httpHandler = HttpHandler.for({ framework: "Next", controller: getPing });
 export default httpHandler.handlerFn;

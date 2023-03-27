@@ -1,6 +1,8 @@
+import { OidcClient } from "../OidcClient";
+import { IdProvider } from "../../common/Id";
+import { VersionProvider } from "../../common/Version";
 import { OidcClientName } from "../OidcClientName";
-import { OidcClient } from "../../entities/oidc-client/OidcClient";
-import { HttpSecureUrl } from "../HttpSecureUrl";
+import { OidcClientRedirects } from "../OidcClientRedirects";
 
 export interface OidcClientInfo {
   application_type?: "native" | "web";
@@ -10,22 +12,41 @@ export interface OidcClientInfo {
 }
 
 export interface OidcClientRepository {
-  add(client: OidcClient);
+  save: (client: OidcClient) => Promise<OidcClient>;
 }
 
 export class OidcClientRegistration {
-  #oidcClientRepo;
-  public async of({ client_name, redirect_uris }: OidcClientInfo) {
-    let clientName = OidcClientName.of(client_name);
-    let redirects = redirect_uris.forEach(HttpSecureUrl.fromString);
+  #oidcClientRepo: OidcClientRepository;
+  #idProvider: IdProvider;
+  #versionProvider: VersionProvider;
 
-    return {
-      client_name: clientName.value,
-      redirect_uris: redirects,
+  public async of({ client_name, redirect_uris }: OidcClientInfo) {
+    let clientProps = {
+      name: OidcClientName.of(client_name),
+      redirects: OidcClientRedirects.fromStringArray(redirect_uris),
     };
+
+    let config = {
+      idProvider: this.#idProvider,
+      versionProvider: this.#versionProvider,
+    };
+
+    let newClient = await OidcClient.register(clientProps, config);
+
+    return this.#oidcClientRepo.save(newClient);
   }
   public REQUIRED_PARAMS = ["redirect_uris", "client_name"];
-  constructor({ oidcClientRepo }: { oidcClientRepo: OidcClientRepository }) {
+  constructor({
+    oidcClientRepo,
+    idProvider,
+    versionProvider,
+  }: {
+    oidcClientRepo: OidcClientRepository;
+    idProvider: IdProvider;
+    versionProvider: VersionProvider;
+  }) {
     this.#oidcClientRepo = oidcClientRepo;
+    this.#idProvider = idProvider;
+    this.#versionProvider = versionProvider;
   }
 }

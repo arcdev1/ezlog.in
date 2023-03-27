@@ -1,28 +1,11 @@
 import {
-  makeHttpHandler,
+  // makeHttpHandler,
   HttpRequestObject,
   HttpResponseObject,
   created,
   methodNotAllowed,
   unsupportedMediaType,
-} from "../../../../infrastructure/http-handler";
-
-const { handler, config } = makeHttpHandler(handleClientRequest);
-export default handler;
-export { config };
-
-function handleClientRequest(
-  request: HttpRequestObject
-): Readonly<HttpResponseObject> {
-  if (request.method === "POST") {
-    const accept = ["application/json", "application/x-www-form-urlencoded"];
-    if (!accept.includes(request.headers["content-type"])) {
-      return unsupportedMediaType({ accept });
-    }
-    return postClient(request);
-  }
-  return methodNotAllowed({ allow: "POST" });
-}
+} from "../../../../common/infrastructure/HttpHandler";
 
 function postClient(request: HttpRequestObject): Readonly<HttpResponseObject> {
   return created({

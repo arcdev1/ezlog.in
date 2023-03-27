@@ -1,6 +1,6 @@
 import fetch from "cross-fetch";
-import { Result } from "../entities/Result";
-import { HttpClient } from "../services";
+import { Result } from "../../entities/Result";
+import { HttpClient } from "../../services";
 
 class HttpClientImpl implements HttpClient {
   constructor() {}

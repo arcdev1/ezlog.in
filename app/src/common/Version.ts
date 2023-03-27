@@ -1,27 +1,23 @@
 import { ValueObject } from "./ValueObject";
 import { CustomError } from "../errors/CustomError";
-import { isNotNumber, hasNoDecimal, isNotBetween } from "./utils";
+import { isNotNumber, hasNoDecimal, isNotBetween } from "./utils/assertions";
 import { errorIf } from "../errors/";
 
-export type VersionNumberProvider = () => number;
+export type PrimitiveVersionFn = () => number | Promise<number>;
 
 export interface VersionProvider {
-  next: () => Version;
-}
-
-interface VersionProviderProps {
-  makeVersion: VersionNumberProvider;
+  next: () => Version | Promise<Version>;
 }
 
 export class VersionProviderImpl implements VersionProvider {
-  #makeVersion: VersionNumberProvider;
+  #primitiveVersion: PrimitiveVersionFn;
 
-  constructor(props: VersionProviderProps) {
-    this.#makeVersion = props.makeVersion;
+  constructor({ primitiveVersion }: { primitiveVersion: PrimitiveVersionFn }) {
+    this.#primitiveVersion = primitiveVersion;
   }
 
-  public next() {
-    return Version.of(this.#makeVersion());
+  public async next() {
+    return Version.of(await this.#primitiveVersion());
   }
 }
 
@@ -49,12 +45,12 @@ export class Version extends ValueObject<number> {
     return Date.now() + Version.CLOCKSKEW_IN_MS;
   }
 
-  public static get CLOCKSKEW_IN_MS() {
-    return 120000; // 2 minutes
-  }
-
   public static get MIN() {
     return 1597723200000; // new Date("August 18, 2020").valueOf()
+  }
+
+  private static get CLOCKSKEW_IN_MS() {
+    return 120000; // 2 minutes
   }
 }
 

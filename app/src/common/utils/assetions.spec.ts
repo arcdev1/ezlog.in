@@ -1,4 +1,4 @@
-import { isNullOrEmpty, isNotNullOrEmpty } from "./utils";
+import { isNullOrEmpty, isNotNullOrEmpty } from "./assertions";
 
 describe("utils", () => {
   it("is null or empty", () => {

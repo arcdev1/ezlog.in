@@ -2,17 +2,27 @@ import {
   Version,
   BadVersionNumberError,
   VersionOutOfRangeError,
+  VersionProvider,
 } from "./Version";
+import { container, TYPES } from "../ioc";
 
 describe("version", () => {
+  let versionProvider: VersionProvider;
+  beforeAll(() => {
+    versionProvider = container.resolve<VersionProvider>(TYPES.VersionProvider);
+  });
+  afterAll(async () => {
+    await container.dispose();
+  });
+
   it("creates a unique version", () => {
-    let v1 = Version.next();
-    let v2 = Version.next();
+    let v1 = versionProvider.next();
+    let v2 = versionProvider.next();
     expect(v1.value).not.toBe(v2.value);
   });
   it("compares", () => {
-    let v1 = Version.next();
-    let v2 = Version.next();
+    let v1 = versionProvider.next();
+    let v2 = versionProvider.next();
     expect(v1.equals(v1)).toBe(true);
     expect(v2.equals(v2)).toBe(true);
     expect(v1.equals(v2)).toBe(false);

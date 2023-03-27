@@ -2,35 +2,36 @@ import { Id, IdProvider } from "../common/Id";
 import { ReferenceObject } from "../common/ReferenceObject";
 import { Version, VersionProvider } from "../common/Version";
 import { OidcClientName } from "./OidcClientName";
-import { HttpSecureUrl } from "./HttpSecureUrl";
+import { OidcClientRedirects } from "./OidcClientRedirects";
 
 interface OidcClientProps {
   id: Id;
   name: OidcClientName;
   version?: Version;
-  redirects: HttpSecureUrl[];
-}
-
-interface RegisterProps {
-  name: string;
-  redirects: string[];
-}
-
-interface RegisterOptions {
-  idProvider: IdProvider;
-  versionProvider: VersionProvider;
+  redirects: OidcClientRedirects;
+  applicationType?: "native" | "web";
 }
 
 export class OidcClient extends ReferenceObject {
   #name: OidcClientName;
-  #redirects: HttpSecureUrl[];
+  #redirects: OidcClientRedirects;
+  #applicationType?: "native" | "web";
 
-  public static register(props: RegisterProps, options: RegisterOptions) {
+  public static async register(
+    props: {
+      name: OidcClientName;
+      redirects: OidcClientRedirects;
+    },
+    config: {
+      idProvider: IdProvider;
+      versionProvider: VersionProvider;
+    }
+  ) {
     return OidcClient.of({
-      id: options.idProvider.next(),
-      name: OidcClientName.of(props.name),
-      redirects: props.redirects.map(HttpSecureUrl.fromString),
-      version: options.versionProvider.next(),
+      id: await config.idProvider.next(),
+      name: props.name,
+      redirects: props.redirects,
+      version: await config.versionProvider.next(),
     });
   }
 
@@ -42,17 +43,22 @@ export class OidcClient extends ReferenceObject {
     super(props);
     this.#name = props.name;
     this.#redirects = props.redirects;
+    this.#applicationType = props.applicationType;
   }
 
   public rename(name: OidcClientName) {
     this.#name = name;
   }
 
-  public get name(): OidcClientName {
+  public get name() {
     return this.#name;
   }
 
-  public get redirects(): HttpSecureUrl[] {
+  public get redirects() {
     return this.#redirects;
+  }
+
+  public get applicationType() {
+    return this.#applicationType;
   }
 }
