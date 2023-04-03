@@ -1,0 +1,110 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+    seed     = "ts-node seed.ts"
+}
+
+model Address {
+    id             String  @id @default(uuid())
+    country        String
+    locality       String?
+    postal_code    String?
+    region         String?
+    street_address String?
+    user_id        String  @unique
+    user           User    @relation(fields: [user_id], references: [id])
+}
+
+model Authorization {
+    id                    String               @id @default(uuid())
+    client_id             String
+    code                  String               @unique
+    code_challenge        String?
+    code_challenge_method CodeChallengeMethod?
+    created_at            DateTime             @default(now())
+    expires_at            DateTime
+    nonce                 String?
+    redirect_uri          String
+    scope                 String
+    state                 String?
+    user_id               String
+    client                Client               @relation(fields: [client_id], references: [client_id])
+}
+
+model Client {
+    id                  String   @id @default(uuid())
+    client_id           String   @unique
+    client_secret       String
+    redirect_uris       String[]
+    name                String?
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+    session_cookie_name String   @default("sid")
+    brand_color         String   @default("#000000")
+    logo_url            String?
+    brand_color_dark    String   @default("#FFFFFF")
+    logo_url_dark       String?
+
+    // Relations
+    authorizations Authorization[]
+    users          User[]
+}
+
+model TokenStatus {
+    id         String     @id @default(uuid())
+    type       TokenType
+    token_hash String     @unique
+    created_at DateTime   @default(now())
+    expires_at DateTime
+    status     TokenState @default(VALID)
+
+    @@index([type, token_hash])
+}
+
+model User {
+    id                    String    @id @default(uuid())
+    address               Address?
+    birthdate             String?
+    created_at            DateTime  @default(now())
+    email                 String    @unique
+    verified_email        String?
+    family_name           String?
+    gender                String?
+    given_name            String?
+    language              String?
+    auth_time             DateTime?
+    locale                String?
+    middle_name           String?
+    name                  String?
+    nickname              String?
+    password              String
+    phone_number          String?
+    verified_phone_number String?
+    picture               String?
+    preferred_username    String?
+    profile               String?
+    updated_at            DateTime? @updatedAt
+    website               String?
+    zoneinfo              String?
+    clients               Client[]
+}
+
+enum TokenType {
+    ACCESS
+    REFRESH
+    ID
+}
+
+enum TokenState {
+    VALID
+    REVOKED
+}
+
+enum CodeChallengeMethod {
+    plain
+    S256
+}
